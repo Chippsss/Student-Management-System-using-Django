@@ -1,0 +1,15 @@
+{% extends "teacher/layout.html"%}
+
+{% block body %}
+
+    <h1>Teacher Login</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
+    {% if form.errors %}
+        <p style="color: red;">{{ form.errors }}</p>
+    {% endif %}
+
+{% endblock %}

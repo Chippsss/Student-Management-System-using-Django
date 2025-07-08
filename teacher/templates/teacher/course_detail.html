@@ -1,0 +1,49 @@
+{% extends "teacher/layout.html"%}
+
+{% block body %}
+
+    <h1>Course Details: {{ course.name }} ({{ course.code }})</h1>
+    <p>Taught by: {% if course.teacher %}{{ course.teacher.user.get_full_name }}{% else %}Unassigned{% endif %}</p>
+    <p>Branch: {{ course.branch.name }}</p>
+    <p>Semester: {{ course.semester.get_semester_number_display }} ({{ course.semester.academic_year.year }})</p>
+    <p>Description: {{ course.description|default:"N/A" }}</p>
+
+    <h2>Enrolled Students:</h2>
+    {% if enrolled_students %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>PRN</th>
+                    <th>Branch</th>
+                    <th>Semester</th>
+                    <th>Division</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in enrolled_students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.first }} {{ student.last }}</td>
+                        <td>{{ student.prn|default:"N/A" }}</td>
+                        <td>{{ student.branch.name|default:"N/A" }}</td>
+                        <td>{{ student.current_semester.get_semester_number_display|default:"N/A" }}</td>
+                        <td>{{ student.division.name|default:"N/A" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No students enrolled in this course yet.</p>
+    {% endif %}
+
+    <h2>Management Links:</h2>
+    <ul>
+        <li><a href="{% url 'teacher:manage_attendance' course.id %}">Manage Attendance</a></li>
+        <li><a href="{% url 'teacher:manage_grades' course.id %}">Manage Grades</a></li>
+        <li><a href="{% url 'teacher:manage_assignments' course.id %}">Manage Assignments</a></li>
+    </ul>
+    <p><a href="{% url 'teacher:dashboard' %}">Back to Dashboard</a></p>
+
+{% endblock %}

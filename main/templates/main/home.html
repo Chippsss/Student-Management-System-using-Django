@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to SMS</title>
+    
+    <style>
+        body { font-family: sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; }
+        h1 { color: #333; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 10px; }
+        #student_login{ padding: 20px; border: solid; background-color: antiquewhite; color: rgb(255, 147, 5); text-align: center;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Student Management System!</h1>
+        <p>Please select your role to proceed:</p>
+        <ul>
+            <li><a href="{% url 'student:login' %}"><div id="student_login">Student Login</div></a></li>
+            <li><a href="{% url 'teacher:login' %}">Teacher Login</a></li>
+        </ul>
+
+        {% if user.is_authenticated %}
+            <hr>
+            <p>You are currently logged in as: <strong>{{ user.username }}</strong>.
+            You can <a href="{% url 'student:logout' %}">Logout</a>.</p>
+            <p> (Note: If you expected to be redirected to a dashboard, ensure your user account is linked to a Student or Teacher profile in the admin.)</p>
+        {% endif %}
+    </div>
+</body>
+</html>

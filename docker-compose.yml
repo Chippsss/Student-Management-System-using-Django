@@ -1,0 +1,52 @@
+# docker-compose.yml
+version: '3.8' # Specify the Docker Compose file format version
+
+services:
+  # Database Service (PostgreSQL)
+  db:
+    image: postgres:13 # Use a stable PostgreSQL image
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/ # Mount a named volume for persistent data
+    environment:
+      POSTGRES_DB: sms_db # Your database name
+      POSTGRES_USER: sms_user # Your database user
+      POSTGRES_PASSWORD: sms_password # Your database password
+    ports:
+      - "5432:5432" # Format: "HOST_PORT:CONTAINER_PORT"
+    healthcheck: # Optional: Define a health check for the DB
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  # Django Web Application Service
+  web:
+    build: . # Tells Docker Compose to build the image from the Dockerfile in the current directory
+    # UPDATED: Use wait_for_db.sh script before Django commands
+    command: >
+      /usr/local/bin/wait_for_db.sh bash -c "
+      python manage.py makemigrations &&
+      python manage.py migrate --noinput &&
+      python manage.py collectstatic --noinput &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://sms_user:sms_password@db:5432/sms_db
+      DJANGO_SETTINGS_MODULE: sms.settings
+      DEBUG: "True" # For development only
+      SECRET_KEY: "your_super_insecure_default_key_for_dev_only" # Ensure this matches your settings.py fallback
+      POSTGRES_HOST: db # Explicitly pass DB host for wait_for_db.sh
+      POSTGRES_PORT: 5432 # Explicitly pass DB port for wait_for_db.sh
+    restart: unless-stopped
+
+# Define named volumes for persistent data
+volumes:
+  postgres_data:

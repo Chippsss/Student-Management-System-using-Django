@@ -1,0 +1,83 @@
+{% extends "teacher/layout.html"%}
+
+{% block body %}
+
+    <h1>Manage Attendance for {{ course.name }} ({{ course.code }})</h1>
+    <p>Taught by: {% if teacher.user.get_full_name %}{{ teacher.user.get_full_name }}{% else %}{{ teacher.user.username }}{% endif %}</p>
+
+    <form method="GET" action="{% url 'teacher:manage_attendance' course.id %}">
+        <label for="division">Select Division:</label>
+        <select name="division" id="division" onchange="this.form.submit()">
+            <option value="">-- Select Division --</option>
+            {% for div in available_divisions %}
+                <option value="{{ div.id }}" {% if selected_division and selected_division.id == div.id %}selected{% endif %}>
+                    {{ div.name }} ({{ div.branch.code }}, {{ div.academic_year.year }})
+                </option>
+            {% endfor %}
+        </select>
+        {% if selected_division %}
+            <br><br>
+            <label for="date">Select Date:</label>
+            <input type="date" name="date" id="date" value="{{ selected_date|default:'' }}" onchange="this.form.submit()">
+        {% endif %}
+    </form>
+
+    {% if selected_division and selected_date %}
+        <h2>Attendance for Division {{ selected_division.name }} on {{ selected_date }}</h2>
+        <form method="post" action="{% url 'teacher:manage_attendance' course.id %}?division={{ selected_division.id }}&date={{ selected_date }}">
+            {% csrf_token %}
+            <input type="hidden" name="course_id" value="{{ course.id }}">
+            <input type="hidden" name="division_id" value="{{ selected_division.id }}">
+            <input type="hidden" name="attendance_date" value="{{ selected_date }}">
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Action (for saving)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student_status in students_in_division %}
+                        <tr>
+                            <td>{{ student_status.student.id }}</td>
+                            <td>{{ student_status.student.first }} {{ student_status.student.last }}</td>
+                            <td>
+                                {% if student_status.record_exists %}
+                                    {% if student_status.is_present %}Present{% else %}Absent{% endif %}
+                                {% else %}
+                                    No Record Yet
+                                {% endif %}
+                            </td>
+                            <td>
+                                <!-- Example checkboxes - in a real app, you'd use Django forms/formsets -->
+                                <label>
+                                    <input type="radio" name="attendance_{{ student_status.student.id }}" value="present" {% if student_status.is_present == True %}checked{% endif %}> Present
+                                </label>
+                                <label>
+                                    <input type="radio" name="attendance_{{ student_status.student.id }}" value="absent" {% if student_status.is_present == False %}checked{% endif %}> Absent
+                                </label>
+                                <label>
+                                    <input type="radio" name="attendance_{{ student_status.student.id }}" value="no_change" {% if student_status.record_exists == False %}checked{% endif %}> No Change
+                                </label>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4">No students found in this division for this course.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <button type="submit">Save Attendance</button>
+        </form>
+    {% elif selected_division %}
+        <p>Please select a date to view attendance for Division {{ selected_division.name }}.</p>
+    {% else %}
+        <p>Please select a division to manage attendance.</p>
+    {% endif %}
+
+    <p><a href="{% url 'teacher:course_detail' course.id %}">Back to Course Details</a></p>
+
+{% endblock %}

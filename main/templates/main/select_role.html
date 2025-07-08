@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; }
+        h1 { color: #333; }
+        p { color: #555; }
+        a { text-decoration: none; color: #007bff; font-weight: bold; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Account Status</h1>
+        <p>{{ message }}</p>
+        {% if user %}
+            <p>Logged in as: <strong>{{ user.username }}</strong></p>
+        {% endif %}
+        <p>Please <a href="{% url 'student:logout' %}">logout</a> or contact your administrator to link your profile.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends "teacher/layout.html"%}
+
+{% block body %}
+
+    <h1>Welcome, {% if teacher.user.get_full_name %}{{ teacher.user.get_full_name }}{% else %}{{ teacher.user.username }}{% endif %}!</h1>
+    <p>Employee ID: {{ teacher.employee_id }}</p>
+    <p>Branch: {% if teacher.branch %}{{ teacher.branch.name }}{% else %}N/A{% endif %}</p>
+
+    <h2>Your Assigned Courses:</h2>
+    {% if assigned_courses %}
+        <ul>
+            {% for course in assigned_courses %}
+                <li>
+                    <a href="{% url 'teacher:course_detail' course.id %}">
+                        <strong>{{ course.name }} ({{ course.code }})</strong>
+                    </a>
+                    <br>
+                    <small>Branch: {{ course.branch.name }}, Semester: {{ course.semester.get_semester_number_display }} ({{ course.semester.academic_year.year }})</small>
+                    <ul>
+                        <li><a href="{% url 'teacher:manage_attendance' course.id %}">Manage Attendance</a></li>
+                        <li><a href="{% url 'teacher:manage_grades' course.id %}">Manage Grades</a></li>
+                        <li><a href="{% url 'teacher:manage_assignments' course.id %}">Manage Assignments</a></li>
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You are not currently assigned to any courses.</p>
+    {% endif %}
+    <p><a href="{% url 'teacher:logout' %}">Logout</a></p>
+
+{% endblock %}

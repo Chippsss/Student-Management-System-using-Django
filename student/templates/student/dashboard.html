@@ -1,0 +1,22 @@
+{% extends "student/layout.html" %}
+
+{% block body%}
+
+    <h1>Welcome, {{ student.first }} {{ student.last }}!</h1>
+        <p>Student ID: {{ student.id }}</p>
+        <p>Current Year: {{ student.academic_year.year|default:"N/A" }}</p>
+        <p>Branch: {{ student.branch.name|default:"N/A" }}</p>
+        <p>Current Semester: {{ student.current_semester.get_semester_number_display|default:"N/A" }}</p>
+        <p>Division: {{ student.division.name|default:"N/A" }}</p>
+    
+        <h2>Your Quick Links:</h2>
+        <ul>
+            <li><a href="{% url 'student:profile' %}">View Profile</a></li>
+            <li><a href="{% url 'student:courses' %}">My Courses</a></li>
+            <li><a href="{% url 'student:grades' %}">My Grades</a></li>
+            <li><a href="{% url 'student:attendance' %}">My Attendance</a></li>
+            <li><a href="{% url 'student:assignments' %}">My Assignments</a></li>
+            <li><a href="{% url 'student:logout' %}">Logout</a></li>
+        </ul>
+
+{% endblock %}

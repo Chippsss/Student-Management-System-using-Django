@@ -1,0 +1,25 @@
+{% extends "student/layout.html" %}
+
+{% block body %}
+
+    <h1>Courses for {{ student.first }} {{ student.last }}</h1>
+    {% if enrolled_courses %}
+        <ul>
+            {% for course in enrolled_courses %}
+                <li>
+                    <strong>{{ course.name }} ({{ course.code }})</strong>
+                    <ul>
+                        <li>Branch: {{ course.branch.name }}</li>
+                        <li>Semester: {{ course.semester.get_semester_number_display }} ({{ course.semester.academic_year.year }})</li>
+                        <li>Teacher: {% if course.teacher %}{{ course.teacher.user.get_full_name }}{% else %}Unassigned{% endif %}</li>
+                        <li>Description: {{ course.description|default:"N/A" }}</li>
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You are not currently enrolled in any courses.</p>
+    {% endif %}
+    <p><a href="{% url 'student:dashboard' %}">Back to Dashboard</a></p>
+
+{% endblock  %}

@@ -1,0 +1,30 @@
+{% extends "student/layout.html" %}
+
+{% block body %}
+
+    <h1>Attendance for {{ student.first }} {{ student.last }}</h1>
+    {% if attendance_records %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Course</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance_records %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.course.name }} ({{ record.course.code }})</td>
+                        <td>{% if record.is_present %}Present{% else %}Absent{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No attendance records available yet.</p>
+    {% endif %}
+    <p><a href="{% url 'student:dashboard' %}">Back to Dashboard</a></p>
+
+{% endblock  %}

@@ -1,0 +1,40 @@
+{% extends "teacher/layout.html"%}
+
+{% block body %}
+
+    <h1>Manage Assignments for {{ course.name }} ({{ course.code }})</h1>
+    <p>Taught by: {% if teacher.user.get_full_name %}{{ teacher.user.get_full_name }}{% else %}{{ teacher.user.username }}{% endif %}</p>
+
+    <h2>Assignments:</h2>
+    {% if assignments %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Due Date</th>
+                    <th>Max Score</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                    <tr>
+                        <td>{{ assignment.title }}</td>
+                        <td>{{ assignment.due_date|date:"Y-m-d H:i" }}</td>
+                        <td>{{ assignment.max_score }}</td>
+                        <td><a href="#">Edit</a> / <a href="#">Delete</a></td> <!-- Placeholder links -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No assignments created for this course yet.</p>
+    {% endif %}
+
+    <h2>Create New Assignment:</h2>
+    <!-- This would typically be a form for creating new assignments -->
+    <p>[Placeholder for Assignment Creation Form]</p>
+
+    <p><a href="{% url 'teacher:course_detail' course.id %}">Back to Course Details</a></p>
+
+{% endblock %}

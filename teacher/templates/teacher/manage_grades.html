@@ -1,0 +1,44 @@
+{% extends "teacher/layout.html"%}
+
+{% block body %}
+
+    <h1>Manage Grades for {{ course.name }} ({{ course.code }})</h1>
+    <p>Taught by: {% if teacher.user.get_full_name %}{{ teacher.user.get_full_name }}{% else %}{{ teacher.user.username }}{% endif %}</p>
+
+    <h2>Current Grades:</h2>
+    {% if grades %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Division</th>
+                    <th>Score</th>
+                    <th>Grade Letter</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.student.id }}</td>
+                        <td>{{ grade.student.first }} {{ grade.student.last }}</td>
+                        <td>{{ grade.student.division.name|default:"N/A" }}</td>
+                        <td>{{ grade.score }}</td>
+                        <td>{{ grade.grade_letter|default:"-" }}</td>
+                        <td><a href="#">Edit</a> / <a href="#">Delete</a></td> <!-- Placeholder links -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No grades entered for this course yet.</p>
+    {% endif %}
+
+    <h2>Add New Grade:</h2>
+    <!-- This would typically be a form for adding new grades -->
+    <p>[Placeholder for Grade Entry Form]</p>
+
+    <p><a href="{% url 'teacher:course_detail' course.id %}">Back to Course Details</a></p>
+
+{% endblock %}
