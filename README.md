@@ -23,5 +23,7 @@ Step 5:
 paste the link: "http://localhost:8000/main"
 then you will see the login page.
 
+to stop the project type command: "docker-compose down".
+
 
 
